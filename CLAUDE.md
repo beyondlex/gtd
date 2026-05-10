@@ -59,7 +59,7 @@ gtd-claude/
 
 - [x] Phase 1: Core Foundation (models, storage, events, utils)
 - [x] Phase 2: Core Services (business logic layer)
-- [ ] Phase 3: TUI Foundation (shell, config, keyboard, state)
+- [x] Phase 3: TUI Foundation (shell, config, keyboard, state)
 - [ ] Phase 4: TUI Views — Read Mode
 - [ ] Phase 5: TUI Interactions — Write Mode
 - [ ] Phase 6: Polish & Build

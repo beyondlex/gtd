@@ -1,0 +1,137 @@
+[[binding]]
+keys = "j"
+action = "moveDown"
+description = "Move selection down"
+context = "global"
+
+[[binding]]
+keys = "k"
+action = "moveUp"
+description = "Move selection up"
+context = "global"
+
+[[binding]]
+keys = "g g"
+action = "goToTop"
+description = "Go to top of list"
+context = "global"
+
+[[binding]]
+keys = "G"
+action = "goToBottom"
+description = "Go to bottom of list"
+context = "global"
+
+[[binding]]
+keys = "space"
+action = "toggleComplete"
+description = "Toggle task completion"
+context = "global"
+
+[[binding]]
+keys = "return"
+action = "openItem"
+description = "Open selected item"
+context = "global"
+
+[[binding]]
+keys = "d"
+action = "deleteTask"
+description = "Delete selected task"
+context = "global"
+
+[[binding]]
+keys = "n"
+action = "newTask"
+description = "Create new task"
+context = "global"
+
+[[binding]]
+keys = "e"
+action = "editTask"
+description = "Edit selected task"
+context = "global"
+
+[[binding]]
+keys = "q"
+action = "quit"
+description = "Quit application"
+context = "global"
+
+[[binding]]
+keys = "?"
+action = "showHelp"
+description = "Show help overlay"
+context = "global"
+
+[[binding]]
+keys = "/"
+action = "startSearch"
+description = "Start search"
+context = "global"
+
+[[binding]]
+keys = "escape"
+action = "closeModal"
+description = "Close modal / cancel"
+context = "modal"
+
+[[binding]]
+keys = "tab"
+action = "nextSection"
+description = "Move to next section"
+context = "global"
+
+[[binding]]
+keys = "shift+tab"
+action = "prevSection"
+description = "Move to previous section"
+context = "global"
+
+[[binding]]
+keys = "1"
+action = "navigateTo"
+description = "Go to inbox"
+context = "global"
+
+[[binding]]
+keys = "2"
+action = "navigateTo"
+description = "Go to today"
+context = "global"
+
+[[binding]]
+keys = "3"
+action = "navigateTo"
+description = "Go to upcoming"
+context = "global"
+
+[[binding]]
+keys = "4"
+action = "navigateTo"
+description = "Go to anytime"
+context = "global"
+
+[[binding]]
+keys = "5"
+action = "navigateTo"
+description = "Go to someday"
+context = "global"
+
+[[binding]]
+keys = "6"
+action = "navigateTo"
+description = "Go to logbook"
+context = "global"
+
+[[binding]]
+keys = "7"
+action = "navigateTo"
+description = "Go to trash"
+context = "global"
+
+[[binding]]
+keys = "ctrl+r"
+action = "refreshView"
+description = "Refresh current view"
+context = "global"

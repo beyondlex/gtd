@@ -1,0 +1,46 @@
+name = "gtd-default"
+
+[colors]
+primary = "#0066CC"
+secondary = "#5E5CE6"
+background = "#1C1C1E"
+surface = "#2C2C2E"
+text = "#FFFFFF"
+textMuted = "#8E8E93"
+accent = "#0A84FF"
+error = "#FF453A"
+success = "#30D158"
+warning = "#FF9F0A"
+
+[sidebar]
+background = "#1C1C1E"
+activeItemBg = "#2C2C2E"
+hoverItemBg = "#3A3A3C"
+text = "#8E8E93"
+textActive = "#FFFFFF"
+countBadgeBg = "#0066CC"
+countBadgeText = "#FFFFFF"
+
+[view]
+background = "#000000"
+headerText = "#FFFFFF"
+groupHeader = "#8E8E93"
+groupHeaderBg = "#2C2C2E"
+itemText = "#FFFFFF"
+itemTextCompleted = "#48484A"
+itemTextDeadline = "#FF453A"
+itemTextProject = "#5E5CE6"
+selectionBg = "#0066CC"
+selectionText = "#FFFFFF"
+
+[statusBar]
+background = "#2C2C2E"
+text = "#8E8E93"
+keyHint = "#FFFFFF"
+modeText = "#30D158"
+
+[badge]
+background = "#0066CC"
+text = "#FFFFFF"
+warningBg = "#FF9F0A"
+warningText = "#000000"
