@@ -5,6 +5,7 @@ import { useTheme } from "../../theme/context.js";
 import { useServices } from "../../services/service-context.js";
 import { TextInput } from "../common/text-input.js";
 import { parseNaturalDate } from "@gtd/core";
+import { resolveQuickCaptureDeadline } from "./quick-capture-deadline.js";
 
 export function QuickCapture() {
   const { state, dispatch } = useAppState();
@@ -29,7 +30,7 @@ export function QuickCapture() {
 
           services.taskService.create({
             title: trimmed,
-            deadline: parsedDeadline ?? undefined,
+            deadline: resolveQuickCaptureDeadline(state.currentView, parsedDeadline),
             isInInbox: state.currentView === "inbox",
           });
 
@@ -95,7 +96,7 @@ export function QuickCapture() {
 
       <Box backgroundColor={theme.modal.background} paddingX={1}>
         <Text color={theme.modal.keyHint}>
-          Enter: Create | Esc: Cancel
+          Enter: Create | Esc: Cancel | Inbox/Today w/o date defaults to today
         </Text>
       </Box>
     </Box>
