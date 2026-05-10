@@ -35,15 +35,18 @@ export function MainContent() {
     }
   }
 
+  // Priority: loading -> empty -> normal view
   if (state.isLoading) {
     return (
       <Box flexGrow={1} justifyContent="center" alignItems="center">
-        <Text color={theme.colors.textMuted}>Loading...</Text>
+        <Text color={theme.colors.textMuted}>Loading…</Text>
       </Box>
     );
   }
 
-  if (state.items.length === 0 && state.currentView !== "anytime") {
+  const shouldShowEmptyState = state.items.length === 0 && state.currentView !== "anytime";
+
+  if (shouldShowEmptyState) {
     return (
       <EmptyState
         message="No items"
