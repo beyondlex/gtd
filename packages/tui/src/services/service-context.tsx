@@ -41,6 +41,8 @@ export interface Services {
   gtdWorkflow: GtdWorkflowService;
 }
 
+let dbManager: DatabaseManager | null = null;
+
 function initializeServices(): Services {
   const dataDir = join(homedir(), ".local", "share", "gtd");
   if (!existsSync(dataDir)) {
@@ -48,7 +50,7 @@ function initializeServices(): Services {
   }
   const dbPath = join(dataDir, "data.db");
 
-  const dbManager = new DatabaseManager(dbPath);
+  dbManager = new DatabaseManager(dbPath);
   dbManager.initialize();
 
   const eventBus = new EventBus();
@@ -91,6 +93,14 @@ function initializeServices(): Services {
     searchService,
     gtdWorkflow,
   };
+}
+
+/** Close the database connection. Call on app shutdown. */
+export function cleanupServices(): void {
+  if (dbManager) {
+    dbManager.close();
+    dbManager = null;
+  }
 }
 
 const services = initializeServices();

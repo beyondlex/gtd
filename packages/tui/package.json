@@ -16,7 +16,7 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "start": "bun run dist/index.js",
-    "build:binary": "bun build ./src/index.tsx --compile --outfile ../gtd",
+    "build:binary": "mkdir -p ../../dist && bun build ./src/index.tsx --compile --outfile ../../dist/gtd",
     "test": "bun test src/__tests__/"
   },
   "dependencies": {

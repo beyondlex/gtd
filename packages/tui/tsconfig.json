@@ -4,7 +4,8 @@
     "jsx": "react-jsx",
     "jsxImportSource": "react",
     "outDir": "dist",
-    "rootDir": "src"
+    "rootDir": "src",
+    "types": ["bun"]
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["src/__tests__"]

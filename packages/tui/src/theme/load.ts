@@ -1,19 +1,31 @@
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { parse } from "smol-toml";
 import type { Theme } from "./types.js";
+import { DEFAULT_THEME_TOML } from "../config/defaults.js";
 
 const CONFIG_DIR = join(homedir(), ".config", "gtd");
 const USER_THEME_PATH = join(CONFIG_DIR, "theme.toml");
-const DEFAULT_THEME_PATH = new URL(
-  "../../config/default-theme.toml",
-  import.meta.url,
-).pathname;
+
+function ensureConfigDir(): void {
+  if (!existsSync(CONFIG_DIR)) {
+    mkdirSync(CONFIG_DIR, { recursive: true });
+  }
+}
+
+function writeDefaultConfigs(): void {
+  const defaultThemePath = join(CONFIG_DIR, "theme.toml");
+  if (!existsSync(defaultThemePath)) {
+    writeFileSync(defaultThemePath, DEFAULT_THEME_TOML, "utf-8");
+  }
+}
 
 export function loadTheme(): Theme {
-  const defaultContent = readFileSync(DEFAULT_THEME_PATH, "utf-8");
-  const theme = parse(defaultContent) as unknown as Theme;
+  ensureConfigDir();
+  writeDefaultConfigs();
+
+  const theme = parse(DEFAULT_THEME_TOML) as unknown as Theme;
 
   if (existsSync(USER_THEME_PATH)) {
     const userContent = readFileSync(USER_THEME_PATH, "utf-8");

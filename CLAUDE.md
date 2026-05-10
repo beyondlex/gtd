@@ -29,6 +29,7 @@ gtd-claude/
 
 - `bun run build:core` — Build core package
 - `bun run build:tui` — Build TUI package
+- `bun run build:binary` — Build standalone binary (`./dist/gtd`)
 - `bun run build` — Build all packages
 - `bun test` — Run all tests
 - `bun run test:core` — Run core tests only
@@ -62,4 +63,4 @@ gtd-claude/
 - [x] Phase 3: TUI Foundation (shell, config, keyboard, state)
 - [x] Phase 4: TUI Views — Read Mode
 - [x] Phase 5: TUI Interactions — Write Mode
-- [ ] Phase 6: Polish & Build
+- [x] Phase 6: Polish & Build
