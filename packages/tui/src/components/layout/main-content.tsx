@@ -1,6 +1,8 @@
 import { Box, Text } from "ink";
 import { useAppState } from "../../state/context.js";
 import { useTheme } from "../../theme/context.js";
+import { EmptyState } from "../common/empty-state.js";
+import { SearchView } from "../views/search-view.js";
 import { InboxView } from "../views/inbox-view.js";
 import { TodayView } from "../views/today-view.js";
 import { UpcomingView } from "../views/upcoming-view.js";
@@ -13,6 +15,11 @@ export function MainContent() {
   const { state } = useAppState();
   const theme = useTheme();
 
+  // Render search modal overlay
+  if (state.modal?.type === "search") {
+    return <SearchView />;
+  }
+
   if (state.isLoading) {
     return (
       <Box flexGrow={1} justifyContent="center" alignItems="center">
@@ -21,19 +28,12 @@ export function MainContent() {
     );
   }
 
-  if (state.items.length === 0) {
+  if (state.items.length === 0 && state.currentView !== "anytime") {
     return (
-      <Box
-        flexGrow={1}
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Text color={theme.colors.textMuted}>No items</Text>
-        <Text color={theme.colors.textMuted}>
-          Press "n" to create a new task
-        </Text>
-      </Box>
+      <EmptyState
+        message="No items"
+        hint='Press "n" to create a new task'
+      />
     );
   }
 

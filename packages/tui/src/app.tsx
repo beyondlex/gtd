@@ -8,15 +8,29 @@ import { useKeybindings } from "./keybindings/useKeybindings.js";
 import { Sidebar } from "./components/layout/sidebar.js";
 import { MainContent } from "./components/layout/main-content.js";
 import { StatusBar } from "./components/layout/status-bar.js";
-import type { ViewType, Task } from "@gtd/core";
+import { buildAnytimeRenderPlan, getSectionBoundaries } from "./components/views/anytime-utils.js";
+import type { ViewType, Task, AnytimeData } from "@gtd/core";
 
 const keybindings = loadKeybindings();
+
+interface ViewData {
+  items: Task[];
+  boundaries: number[];
+  groupLabels?: string[];
+  renderPlanLength?: number;
+  anytimeData?: AnytimeData | null;
+}
 
 function AppInner() {
   const { state, dispatch } = useAppState();
   const services = useServices();
 
-  useKeybindings(keybindings, dispatch, state.modal ? "modal" : "global");
+  const context = state.modal
+    ? state.modal.type === "search"
+      ? "search"
+      : "modal"
+    : "global";
+  useKeybindings(keybindings, dispatch, context);
 
   useEffect(() => {
     if (state.shouldQuit) {
@@ -24,12 +38,20 @@ function AppInner() {
     }
   }, [state.shouldQuit]);
 
+  // Main data fetching effect
   useEffect(() => {
     if (!state.isLoading) return;
 
     try {
-      const { items, boundaries } = fetchViewData(state.currentView, services);
-      dispatch({ type: "SET_ITEMS", items, sectionBoundaries: boundaries });
+      const data = fetchViewData(state.currentView, services);
+      dispatch({
+        type: "SET_ITEMS",
+        items: data.items,
+        sectionBoundaries: data.boundaries,
+        groupLabels: data.groupLabels,
+        renderPlanLength: data.renderPlanLength,
+        anytimeData: data.anytimeData,
+      });
 
       const counts = fetchAllCounts(services);
       dispatch({ type: "SET_COUNTS", counts });
@@ -40,6 +62,23 @@ function AppInner() {
       });
     }
   }, [state.currentView, state.isLoading, services, dispatch]);
+
+  // Recompute anytime render plan when collapse state changes
+  useEffect(() => {
+    if (state.currentView !== "anytime" || !state.anytimeData) return;
+
+    const plan = buildAnytimeRenderPlan(state.anytimeData, state.anytimeExpanded);
+    const { boundaries, labels } = getSectionBoundaries(plan);
+
+    dispatch({
+      type: "SET_ITEMS",
+      items: [],
+      sectionBoundaries: boundaries,
+      groupLabels: labels,
+      renderPlanLength: plan.length,
+      anytimeData: state.anytimeData,
+    });
+  }, [state.anytimeData, state.anytimeExpanded, state.currentView, dispatch]);
 
   return (
     <Box flexDirection="row" height="100%">
@@ -79,49 +118,62 @@ function buildBoundaries(groupLengths: number[]): number[] {
 function fetchViewData(
   view: ViewType,
   svc: ReturnType<typeof useServices>,
-): { items: Task[]; boundaries: number[] } {
+): ViewData {
   switch (view) {
-    case "inbox":
-      return { items: svc.inboxService.getInboxItems(), boundaries: [0] };
+    case "inbox": {
+      const items = svc.inboxService.getInboxItems();
+      return { items, boundaries: [0], groupLabels: ["Inbox"] };
+    }
     case "today": {
       const groups = svc.todayView.getGroups();
       const items = groups.flatMap((g) => g.tasks);
       const boundaries = buildBoundaries(groups.map((g) => g.tasks.length));
-      return { items, boundaries };
+      const groupLabels = groups.map((g) => g.label);
+      return { items, boundaries, groupLabels };
     }
     case "upcoming": {
       const groups = svc.upcomingView.getGroups();
       const items = groups.flatMap((g) => g.tasks);
       const boundaries = buildBoundaries(groups.map((g) => g.tasks.length));
-      return { items, boundaries };
+      const groupLabels = groups.map((g) => g.label);
+      return { items, boundaries, groupLabels };
     }
     case "anytime": {
       const data = svc.anytimeView.getData();
-      const items = [
-        ...data.ungrouped.tasks,
-        ...data.areaGroups.flatMap((ag) => [
-          ...ag.tasks,
-          ...ag.projects.flatMap((pg) => pg.tasks),
-        ]),
-      ];
-      return { items, boundaries: [0] };
+      const plan = buildAnytimeRenderPlan(data, {});
+      const { boundaries, labels } = getSectionBoundaries(plan);
+      return {
+        items: [],
+        boundaries,
+        groupLabels: labels,
+        renderPlanLength: plan.length,
+        anytimeData: data,
+      };
     }
     case "someday": {
       const data = svc.somedayView.getData();
-      return { items: data.tasks, boundaries: [0] };
+      const items = data.tasks;
+      const hasProjects = data.projects.length > 0;
+      const boundaries = hasProjects ? [0, items.length] : [0];
+      const groupLabels = hasProjects ? ["Tasks", "Projects"] : ["Someday"];
+      return {
+        items,
+        boundaries,
+        groupLabels,
+        renderPlanLength: hasProjects ? items.length + data.projects.length : items.length,
+      };
     }
     case "logbook": {
       const groups = svc.logbookView.getGroups();
       const items = groups.flatMap((g) => g.tasks);
       const boundaries = buildBoundaries(groups.map((g) => g.tasks.length));
-      return { items, boundaries };
+      const groupLabels = groups.map((g) => g.label);
+      return { items, boundaries, groupLabels };
     }
     case "trash": {
       const trash = svc.trashView.getTrashedItems();
-      return {
-        items: trash.map((t) => t.task),
-        boundaries: [0],
-      };
+      const items = trash.map((t) => t.task);
+      return { items, boundaries: [0], groupLabels: ["Trash"] };
     }
   }
 }

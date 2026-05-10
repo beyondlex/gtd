@@ -71,4 +71,14 @@ describe("loadTheme", () => {
     expect(theme.badge.warningBg).toBeDefined();
     expect(theme.badge.warningText).toBeDefined();
   });
+
+  test("theme has all search fields", () => {
+    const theme = loadTheme();
+    expect(theme.search).toBeDefined();
+    expect(theme.search.inputBg).toBeDefined();
+    expect(theme.search.inputText).toBeDefined();
+    expect(theme.search.inputPlaceholder).toBeDefined();
+    expect(theme.search.resultText).toBeDefined();
+    expect(theme.search.resultMatch).toBeDefined();
+  });
 });

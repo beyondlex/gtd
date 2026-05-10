@@ -6,9 +6,7 @@ export function StatusBar() {
   const { state } = useAppState();
   const theme = useTheme();
 
-  const hints = state.modal
-    ? "Esc: Close"
-    : "j/k: Move | n: New | Space: Done | d: Delete | q: Quit | ?: Help";
+  const hints = getHints(state);
 
   return (
     <Box
@@ -26,4 +24,28 @@ export function StatusBar() {
       </Text>
     </Box>
   );
+}
+
+function getHints(state: import("../../state/types.js").AppState): string {
+  if (state.modal) {
+    if (state.modal.type === "search") {
+      return "Esc: Close | j/k: Navigate | Enter: Select";
+    }
+    return "Esc: Close";
+  }
+
+  switch (state.currentView) {
+    case "anytime":
+      return "j/k: Move | h: Toggle collapse | n: New | Space: Done | d: Delete | q: Quit | ?: Help";
+    case "inbox":
+    case "today":
+    case "upcoming":
+    case "someday":
+      return "j/k: Move | n: New | Space: Done | d: Delete | q: Quit | ?: Help";
+    case "logbook":
+    case "trash":
+      return "j/k: Move | q: Quit | ?: Help";
+    default:
+      return "j/k: Move | n: New | Space: Done | d: Delete | q: Quit | ?: Help";
+  }
 }

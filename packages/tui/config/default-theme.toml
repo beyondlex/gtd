@@ -44,3 +44,10 @@ background = "#0066CC"
 text = "#FFFFFF"
 warningBg = "#FF9F0A"
 warningText = "#000000"
+
+[search]
+inputBg = "#2C2C2E"
+inputText = "#FFFFFF"
+inputPlaceholder = "#8E8E93"
+resultText = "#FFFFFF"
+resultMatch = "#0A84FF"

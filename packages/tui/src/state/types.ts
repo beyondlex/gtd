@@ -1,8 +1,14 @@
-import type { ViewType } from "@gtd/core";
+import type { ViewType, AnytimeData } from "@gtd/core";
 
 export interface ModalState {
   type: "newTask" | "editTask" | "deleteConfirm" | "help" | "search";
   payload?: Record<string, unknown>;
+}
+
+export interface SearchModalState {
+  type: "search";
+  query: string;
+  results: import("@gtd/core").Task[];
 }
 
 export interface AppState {
@@ -10,11 +16,15 @@ export interface AppState {
   selectedIndex: number;
   items: import("@gtd/core").Task[];
   sectionBoundaries: number[];
+  groupLabels: string[];
+  renderPlanLength: number | null;
   counts: Record<ViewType, number>;
-  modal: ModalState | null;
+  modal: ModalState | SearchModalState | null;
   statusMessage: string | null;
   isLoading: boolean;
   shouldQuit: boolean;
+  anytimeData: AnytimeData | null;
+  anytimeExpanded: Record<string, boolean>;
 }
 
 export type AppAction =
@@ -26,9 +36,9 @@ export type AppAction =
   | { type: "GO_TO_BOTTOM" }
   | { type: "NEXT_SECTION" }
   | { type: "PREV_SECTION" }
-  | { type: "SET_ITEMS"; items: import("@gtd/core").Task[]; sectionBoundaries: number[] }
+  | { type: "SET_ITEMS"; items: import("@gtd/core").Task[]; sectionBoundaries: number[]; groupLabels?: string[]; renderPlanLength?: number; anytimeData?: AnytimeData | null }
   | { type: "SET_COUNTS"; counts: Record<ViewType, number> }
-  | { type: "OPEN_MODAL"; modal: ModalState }
+  | { type: "OPEN_MODAL"; modal: ModalState | SearchModalState }
   | { type: "CLOSE_MODAL" }
   | { type: "SET_STATUS"; message: string | null }
   | { type: "SET_LOADING"; isLoading: boolean }
@@ -36,6 +46,7 @@ export type AppAction =
   | { type: "TOGGLE_COMPLETE" }
   | { type: "DELETE_TASK" }
   | { type: "OPEN_ITEM" }
+  | { type: "TOGGLE_COLLAPSE"; id: string }
   | { type: "QUIT" }
   | { type: "NOOP" };
 
@@ -44,6 +55,8 @@ export const INITIAL_STATE: AppState = {
   selectedIndex: 0,
   items: [],
   sectionBoundaries: [],
+  groupLabels: [],
+  renderPlanLength: null,
   counts: {
     inbox: 0,
     today: 0,
@@ -57,4 +70,6 @@ export const INITIAL_STATE: AppState = {
   statusMessage: null,
   isLoading: false,
   shouldQuit: false,
+  anytimeData: null,
+  anytimeExpanded: {},
 };

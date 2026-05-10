@@ -135,3 +135,21 @@ keys = "ctrl+r"
 action = "refreshView"
 description = "Refresh current view"
 context = "global"
+
+[[binding]]
+keys = "h"
+action = "toggleCollapse"
+description = "Toggle section/project collapse"
+context = "anytime"
+
+[[binding]]
+keys = "escape"
+action = "closeModal"
+description = "Close search"
+context = "search"
+
+[[binding]]
+keys = "return"
+action = "openItem"
+description = "Open selected result"
+context = "search"

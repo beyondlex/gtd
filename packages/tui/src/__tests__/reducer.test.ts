@@ -155,4 +155,80 @@ describe("appReducer", () => {
     const next = appReducer(state, { type: "OPEN_ITEM" });
     expect(next).toBe(state);
   });
+
+  test("NAVIGATE_TO_VIEW resets groupLabels, anytimeData, and renderPlanLength", () => {
+    const state = createState({
+      groupLabels: ["Inbox"],
+      anytimeData: {} as any,
+      renderPlanLength: 10,
+      selectedIndex: 5,
+    });
+    const next = appReducer(state, { type: "NAVIGATE_TO_VIEW", view: "today" });
+    expect(next.groupLabels).toEqual([]);
+    expect(next.anytimeData).toBeNull();
+    expect(next.renderPlanLength).toBeNull();
+  });
+
+  test("SET_ITEMS stores groupLabels and renderPlanLength", () => {
+    const state = createState();
+    const next = appReducer(state, {
+      type: "SET_ITEMS",
+      items: [],
+      sectionBoundaries: [0],
+      groupLabels: ["Inbox"],
+      renderPlanLength: 5,
+    });
+    expect(next.groupLabels).toEqual(["Inbox"]);
+    expect(next.renderPlanLength).toBe(5);
+  });
+
+  test("SET_ITEMS stores anytimeData", () => {
+    const state = createState();
+    const anytimeData = { areaGroups: [], ungrouped: { label: "test", tasks: [] } };
+    const next = appReducer(state, {
+      type: "SET_ITEMS",
+      items: [],
+      sectionBoundaries: [],
+      anytimeData,
+    });
+    expect(next.anytimeData).toBe(anytimeData);
+  });
+
+  test("TOGGLE_COLLAPSE toggles expanded state from true to false", () => {
+    const state = createState({ anytimeExpanded: { "area-1": true } });
+    const next = appReducer(state, { type: "TOGGLE_COLLAPSE", id: "area-1" });
+    expect(next.anytimeExpanded["area-1"]).toBe(false);
+  });
+
+  test("TOGGLE_COLLAPSE toggles expanded state from false to true", () => {
+    const state = createState({ anytimeExpanded: { "area-1": false } });
+    const next = appReducer(state, { type: "TOGGLE_COLLAPSE", id: "area-1" });
+    expect(next.anytimeExpanded["area-1"]).toBe(true);
+  });
+
+  test("TOGGLE_COLLAPSE initializes missing entry to false", () => {
+    const state = createState({ anytimeExpanded: {} });
+    const next = appReducer(state, { type: "TOGGLE_COLLAPSE", id: "area-1" });
+    expect(next.anytimeExpanded["area-1"]).toBe(false);
+  });
+
+  test("MOVE_SELECTION_DOWN uses renderPlanLength when set", () => {
+    const state = createState({
+      items: [],
+      renderPlanLength: 3,
+      selectedIndex: 0,
+    });
+    const next = appReducer(state, { type: "MOVE_SELECTION_DOWN" });
+    expect(next.selectedIndex).toBe(1);
+  });
+
+  test("GO_TO_BOTTOM uses renderPlanLength when set", () => {
+    const state = createState({
+      items: [],
+      renderPlanLength: 5,
+      selectedIndex: 0,
+    });
+    const next = appReducer(state, { type: "GO_TO_BOTTOM" });
+    expect(next.selectedIndex).toBe(4);
+  });
 });

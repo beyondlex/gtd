@@ -48,6 +48,14 @@ export interface ThemeBadge {
   warningText: string;
 }
 
+export interface ThemeSearch {
+  inputBg: string;
+  inputText: string;
+  inputPlaceholder: string;
+  resultText: string;
+  resultMatch: string;
+}
+
 export interface Theme {
   name: string;
   colors: ThemeColors;
@@ -55,4 +63,5 @@ export interface Theme {
   view: ThemeView;
   statusBar: ThemeStatusBar;
   badge: ThemeBadge;
+  search: ThemeSearch;
 }

@@ -9,21 +9,29 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         selectedIndex: 0,
         items: [],
         sectionBoundaries: [],
+        groupLabels: [],
+        renderPlanLength: null,
+        anytimeData: null,
+        anytimeExpanded: {},
         statusMessage: null,
         isLoading: true,
       };
 
-    case "SELECT_ITEM":
+    case "SELECT_ITEM": {
+      const maxLen = state.renderPlanLength ?? state.items.length;
       return {
         ...state,
-        selectedIndex: Math.max(0, Math.min(action.index, state.items.length - 1)),
+        selectedIndex: Math.max(0, Math.min(action.index, maxLen - 1)),
       };
+    }
 
-    case "MOVE_SELECTION_DOWN":
+    case "MOVE_SELECTION_DOWN": {
+      const maxLen = state.renderPlanLength ?? state.items.length;
       return {
         ...state,
-        selectedIndex: Math.min(state.selectedIndex + 1, Math.max(0, state.items.length - 1)),
+        selectedIndex: Math.min(state.selectedIndex + 1, Math.max(0, maxLen - 1)),
       };
+    }
 
     case "MOVE_SELECTION_UP":
       return {
@@ -34,11 +42,13 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     case "GO_TO_TOP":
       return { ...state, selectedIndex: 0 };
 
-    case "GO_TO_BOTTOM":
+    case "GO_TO_BOTTOM": {
+      const maxLen = state.renderPlanLength ?? state.items.length;
       return {
         ...state,
-        selectedIndex: Math.max(0, state.items.length - 1),
+        selectedIndex: Math.max(0, maxLen - 1),
       };
+    }
 
     case "NEXT_SECTION": {
       const next = state.sectionBoundaries.find((b) => b > state.selectedIndex);
@@ -62,7 +72,10 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         ...state,
         items: action.items,
         sectionBoundaries: action.sectionBoundaries,
-        selectedIndex: Math.min(state.selectedIndex, Math.max(0, action.items.length - 1)),
+        groupLabels: action.groupLabels ?? [],
+        renderPlanLength: action.renderPlanLength ?? null,
+        anytimeData: action.anytimeData !== undefined ? action.anytimeData : state.anytimeData,
+        selectedIndex: Math.min(state.selectedIndex, Math.max(0, (action.renderPlanLength ?? action.items.length) - 1)),
         isLoading: false,
       };
 
@@ -83,6 +96,15 @@ export function appReducer(state: AppState, action: AppAction): AppState {
 
     case "REFRESH_VIEW":
       return { ...state, isLoading: true };
+
+    case "TOGGLE_COLLAPSE":
+      return {
+        ...state,
+        anytimeExpanded: {
+          ...state.anytimeExpanded,
+          [action.id]: state.anytimeExpanded[action.id] === false,
+        },
+      };
 
     case "TOGGLE_COMPLETE":
     case "DELETE_TASK":
