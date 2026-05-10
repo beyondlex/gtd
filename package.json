@@ -1,0 +1,18 @@
+{
+  "name": "gtd-claude",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "build:core": "cd packages/core && bun run build",
+    "build:tui": "cd packages/tui && bun run build",
+    "build:binary": "cd packages/tui && bun run build:binary",
+    "build": "bun run build:core && bun run build:tui",
+    "dev:tui": "cd packages/tui && bun run dev",
+    "test": "bun test --coverage",
+    "test:core": "cd packages/core && bun test",
+    "test:tui": "cd packages/tui && bun test",
+    "lint": "tsc --noEmit",
+    "clean": "rm -rf packages/*/dist node_modules"
+  }
+}
