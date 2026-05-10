@@ -3,7 +3,7 @@ import { Box } from "ink";
 import { AppStateProvider, useAppState } from "./state/context.js";
 import { ThemeProvider } from "./theme/context.js";
 import { ServicesProvider, useServices } from "./services/service-context.js";
-import { loadKeybindings } from "./keybindings/load.js";
+import { keybindingRegistry } from "./keybindings/instance.js";
 import { useKeybindings } from "./keybindings/useKeybindings.js";
 import { Sidebar } from "./components/layout/sidebar.js";
 import { MainContent } from "./components/layout/main-content.js";
@@ -11,7 +11,7 @@ import { StatusBar } from "./components/layout/status-bar.js";
 import { buildAnytimeRenderPlan, getSectionBoundaries } from "./components/views/anytime-utils.js";
 import type { ViewType, Task, AnytimeData } from "@gtd/core";
 
-const keybindings = loadKeybindings();
+const keybindings = keybindingRegistry;
 
 interface ViewData {
   items: Task[];
@@ -79,6 +79,31 @@ function AppInner() {
       anytimeData: state.anytimeData,
     });
   }, [state.anytimeData, state.anytimeExpanded, state.currentView, dispatch]);
+
+  // Effect for handling pending actions that require service calls
+  useEffect(() => {
+    if (!state.pendingAction) return;
+
+    const { type, taskId } = state.pendingAction;
+
+    try {
+      if (type === "toggleComplete") {
+        const updated = services.taskService.toggleComplete(taskId);
+        dispatch({
+          type: "SET_STATUS",
+          message: updated.isCompleted ? "Task completed" : "Task uncompleted",
+        });
+      }
+    } catch (error) {
+      dispatch({
+        type: "SET_STATUS",
+        message: `Error: ${(error as Error).message}`,
+      });
+    }
+
+    dispatch({ type: "SET_PENDING_ACTION", payload: null });
+    dispatch({ type: "SET_LOADING", isLoading: true });
+  }, [state.pendingAction, services.taskService, dispatch]);
 
   return (
     <Box flexDirection="row" height="100%">

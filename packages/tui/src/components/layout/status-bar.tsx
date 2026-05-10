@@ -28,10 +28,18 @@ export function StatusBar() {
 
 function getHints(state: import("../../state/types.js").AppState): string {
   if (state.modal) {
-    if (state.modal.type === "search") {
-      return "Esc: Close | j/k: Navigate | Enter: Select";
+    switch (state.modal.type) {
+      case "search":
+        return "Esc: Close | j/k: Navigate | Enter: Select";
+      case "newTask":
+        return "Type title | Enter: Create | Esc: Cancel";
+      case "editTask":
+        return "Tab: Next field | Enter: Save | Esc: Cancel";
+      case "deleteConfirm":
+        return "Enter: Confirm delete | Esc: Cancel";
+      case "help":
+        return "Esc: Close";
     }
-    return "Esc: Close";
   }
 
   switch (state.currentView) {

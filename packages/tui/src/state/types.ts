@@ -1,20 +1,40 @@
-import type { ViewType, AnytimeData } from "@gtd/core";
+import type { ViewType, AnytimeData, Task } from "@gtd/core";
 
-export interface ModalState {
-  type: "newTask" | "editTask" | "deleteConfirm" | "help" | "search";
-  payload?: Record<string, unknown>;
+export interface NewTaskModal {
+  type: "newTask";
 }
+
+export interface EditTaskModal {
+  type: "editTask";
+  payload: { taskId: string };
+}
+
+export interface DeleteConfirmModal {
+  type: "deleteConfirm";
+  payload: { taskId: string; title: string };
+}
+
+export interface HelpModal {
+  type: "help";
+}
+
+export type ModalState = NewTaskModal | EditTaskModal | DeleteConfirmModal | HelpModal;
 
 export interface SearchModalState {
   type: "search";
-  query: string;
-  results: import("@gtd/core").Task[];
+  query?: string;
+  results?: Task[];
+}
+
+export interface PendingAction {
+  type: "toggleComplete";
+  taskId: string;
 }
 
 export interface AppState {
   currentView: ViewType;
   selectedIndex: number;
-  items: import("@gtd/core").Task[];
+  items: Task[];
   sectionBoundaries: number[];
   groupLabels: string[];
   renderPlanLength: number | null;
@@ -25,6 +45,7 @@ export interface AppState {
   shouldQuit: boolean;
   anytimeData: AnytimeData | null;
   anytimeExpanded: Record<string, boolean>;
+  pendingAction: PendingAction | null;
 }
 
 export type AppAction =
@@ -36,7 +57,7 @@ export type AppAction =
   | { type: "GO_TO_BOTTOM" }
   | { type: "NEXT_SECTION" }
   | { type: "PREV_SECTION" }
-  | { type: "SET_ITEMS"; items: import("@gtd/core").Task[]; sectionBoundaries: number[]; groupLabels?: string[]; renderPlanLength?: number; anytimeData?: AnytimeData | null }
+  | { type: "SET_ITEMS"; items: Task[]; sectionBoundaries: number[]; groupLabels?: string[]; renderPlanLength?: number; anytimeData?: AnytimeData | null }
   | { type: "SET_COUNTS"; counts: Record<ViewType, number> }
   | { type: "OPEN_MODAL"; modal: ModalState | SearchModalState }
   | { type: "CLOSE_MODAL" }
@@ -47,6 +68,7 @@ export type AppAction =
   | { type: "DELETE_TASK" }
   | { type: "OPEN_ITEM" }
   | { type: "TOGGLE_COLLAPSE"; id: string }
+  | { type: "SET_PENDING_ACTION"; payload: PendingAction | null }
   | { type: "QUIT" }
   | { type: "NOOP" };
 
@@ -72,4 +94,5 @@ export const INITIAL_STATE: AppState = {
   shouldQuit: false,
   anytimeData: null,
   anytimeExpanded: {},
+  pendingAction: null,
 };

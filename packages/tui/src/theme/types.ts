@@ -56,6 +56,22 @@ export interface ThemeSearch {
   resultMatch: string;
 }
 
+export interface ThemeModal {
+  background: string;
+  borderColor: string;
+  titleText: string;
+  bodyText: string;
+  inputBg: string;
+  inputText: string;
+  inputPlaceholder: string;
+  labelText: string;
+  buttonBg: string;
+  buttonText: string;
+  dangerBg: string;
+  dangerText: string;
+  keyHint: string;
+}
+
 export interface Theme {
   name: string;
   colors: ThemeColors;
@@ -64,4 +80,5 @@ export interface Theme {
   statusBar: ThemeStatusBar;
   badge: ThemeBadge;
   search: ThemeSearch;
+  modal: ThemeModal;
 }

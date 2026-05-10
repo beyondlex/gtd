@@ -81,4 +81,22 @@ describe("loadTheme", () => {
     expect(theme.search.resultText).toBeDefined();
     expect(theme.search.resultMatch).toBeDefined();
   });
+
+  test("theme has all modal fields", () => {
+    const theme = loadTheme();
+    expect(theme.modal).toBeDefined();
+    expect(theme.modal.background).toBeDefined();
+    expect(theme.modal.borderColor).toBeDefined();
+    expect(theme.modal.titleText).toBeDefined();
+    expect(theme.modal.bodyText).toBeDefined();
+    expect(theme.modal.inputBg).toBeDefined();
+    expect(theme.modal.inputText).toBeDefined();
+    expect(theme.modal.inputPlaceholder).toBeDefined();
+    expect(theme.modal.labelText).toBeDefined();
+    expect(theme.modal.buttonBg).toBeDefined();
+    expect(theme.modal.buttonText).toBeDefined();
+    expect(theme.modal.dangerBg).toBeDefined();
+    expect(theme.modal.dangerText).toBeDefined();
+    expect(theme.modal.keyHint).toBeDefined();
+  });
 });

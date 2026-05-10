@@ -138,22 +138,76 @@ describe("appReducer", () => {
     expect(next).toBe(state);
   });
 
-  test("TOGGLE_COMPLETE is a no-op stub", () => {
-    const state = createState({ selectedIndex: 3 });
+  test("TOGGLE_COMPLETE sets pendingAction with selected item ID", () => {
+    const state = createState({
+      items: [{ id: "task-1", title: "Test" } as any, { id: "task-2", title: "Test 2" } as any],
+      selectedIndex: 0,
+    });
+    const next = appReducer(state, { type: "TOGGLE_COMPLETE" });
+    expect(next.pendingAction).toEqual({ type: "toggleComplete", taskId: "task-1" });
+  });
+
+  test("TOGGLE_COMPLETE returns state unchanged when items is empty", () => {
+    const state = createState({ items: [], selectedIndex: 0 });
     const next = appReducer(state, { type: "TOGGLE_COMPLETE" });
     expect(next).toBe(state);
   });
 
-  test("DELETE_TASK is a no-op stub", () => {
-    const state = createState({ selectedIndex: 3 });
+  test("DELETE_TASK opens deleteConfirm modal", () => {
+    const state = createState({
+      items: [{ id: "task-1", title: "Buy milk" } as any],
+      selectedIndex: 0,
+    });
+    const next = appReducer(state, { type: "DELETE_TASK" });
+    expect(next.modal).toEqual({
+      type: "deleteConfirm",
+      payload: { taskId: "task-1", title: "Buy milk" },
+    });
+  });
+
+  test("DELETE_TASK returns state unchanged when items is empty", () => {
+    const state = createState({ items: [], selectedIndex: 0 });
     const next = appReducer(state, { type: "DELETE_TASK" });
     expect(next).toBe(state);
   });
 
-  test("OPEN_ITEM is a no-op stub", () => {
-    const state = createState({ selectedIndex: 3 });
+  test("OPEN_ITEM opens editTask modal", () => {
+    const state = createState({
+      items: [{ id: "task-1", title: "Test" } as any],
+      selectedIndex: 0,
+    });
+    const next = appReducer(state, { type: "OPEN_ITEM" });
+    expect(next.modal).toEqual({
+      type: "editTask",
+      payload: { taskId: "task-1" },
+    });
+  });
+
+  test("OPEN_ITEM returns state unchanged when items is empty", () => {
+    const state = createState({ items: [], selectedIndex: 0 });
     const next = appReducer(state, { type: "OPEN_ITEM" });
     expect(next).toBe(state);
+  });
+
+  test("SET_ITEMS clears pendingAction", () => {
+    const state = createState({
+      pendingAction: { type: "toggleComplete", taskId: "task-1" },
+    });
+    const next = appReducer(state, {
+      type: "SET_ITEMS",
+      items: [],
+      sectionBoundaries: [0],
+    });
+    expect(next.pendingAction).toBeNull();
+  });
+
+  test("SET_PENDING_ACTION sets the payload", () => {
+    const state = createState();
+    const next = appReducer(state, {
+      type: "SET_PENDING_ACTION",
+      payload: { type: "toggleComplete", taskId: "abc" },
+    });
+    expect(next.pendingAction).toEqual({ type: "toggleComplete", taskId: "abc" });
   });
 
   test("NAVIGATE_TO_VIEW resets groupLabels, anytimeData, and renderPlanLength", () => {

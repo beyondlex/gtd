@@ -77,6 +77,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         anytimeData: action.anytimeData !== undefined ? action.anytimeData : state.anytimeData,
         selectedIndex: Math.min(state.selectedIndex, Math.max(0, (action.renderPlanLength ?? action.items.length) - 1)),
         isLoading: false,
+        pendingAction: null,
       };
 
     case "SET_COUNTS":
@@ -106,10 +107,35 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         },
       };
 
-    case "TOGGLE_COMPLETE":
-    case "DELETE_TASK":
-    case "OPEN_ITEM":
-      return state;
+    case "TOGGLE_COMPLETE": {
+      const task = state.items[state.selectedIndex];
+      if (!task) return state;
+      return {
+        ...state,
+        pendingAction: { type: "toggleComplete", taskId: task.id },
+      };
+    }
+
+    case "DELETE_TASK": {
+      const task = state.items[state.selectedIndex];
+      if (!task) return state;
+      return {
+        ...state,
+        modal: { type: "deleteConfirm", payload: { taskId: task.id, title: task.title } },
+      };
+    }
+
+    case "OPEN_ITEM": {
+      const task = state.items[state.selectedIndex];
+      if (!task) return state;
+      return {
+        ...state,
+        modal: { type: "editTask", payload: { taskId: task.id } },
+      };
+    }
+
+    case "SET_PENDING_ACTION":
+      return { ...state, pendingAction: action.payload };
 
     case "QUIT":
       return { ...state, shouldQuit: true };

@@ -50,7 +50,7 @@ function actionFromString(
     case "newTask":
       return { type: "OPEN_MODAL", modal: { type: "newTask" } };
     case "editTask":
-      return { type: "OPEN_MODAL", modal: { type: "editTask" } };
+      return { type: "OPEN_ITEM" };
     case "toggleComplete":
       return { type: "TOGGLE_COMPLETE" };
     case "deleteTask":

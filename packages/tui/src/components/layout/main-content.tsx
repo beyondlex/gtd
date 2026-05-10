@@ -10,14 +10,29 @@ import { AnytimeView } from "../views/anytime-view.js";
 import { SomedayView } from "../views/someday-view.js";
 import { LogbookView } from "../views/logbook-view.js";
 import { TrashView } from "../views/trash-view.js";
+import { QuickCapture } from "../modals/quick-capture.js";
+import { TaskDetail } from "../modals/task-detail.js";
+import { ConfirmDialog } from "../modals/confirm-dialog.js";
+import { HelpOverlay } from "../modals/help-overlay.js";
 
 export function MainContent() {
   const { state } = useAppState();
   const theme = useTheme();
 
-  // Render search modal overlay
-  if (state.modal?.type === "search") {
-    return <SearchView />;
+  // Render modal overlays
+  if (state.modal) {
+    switch (state.modal.type) {
+      case "search":
+        return <SearchView />;
+      case "newTask":
+        return <QuickCapture />;
+      case "editTask":
+        return <TaskDetail taskId={state.modal.payload.taskId} />;
+      case "deleteConfirm":
+        return <ConfirmDialog taskId={state.modal.payload.taskId} title={state.modal.payload.title} />;
+      case "help":
+        return <HelpOverlay />;
+    }
   }
 
   if (state.isLoading) {
