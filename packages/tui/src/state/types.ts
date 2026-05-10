@@ -90,7 +90,7 @@ export const INITIAL_STATE: AppState = {
   },
   modal: null,
   statusMessage: null,
-  isLoading: false,
+  isLoading: true,
   shouldQuit: false,
   anytimeData: null,
   anytimeExpanded: {},
