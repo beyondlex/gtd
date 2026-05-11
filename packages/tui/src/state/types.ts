@@ -26,10 +26,9 @@ export interface SearchModalState {
   results?: Task[];
 }
 
-export interface PendingAction {
-  type: "toggleComplete";
-  taskId: string;
-}
+export type PendingAction =
+  | { type: "toggleComplete"; taskId: string }
+  | { type: "reorder"; taskId: string; adjacentTaskId: string; direction: "up" | "down" };
 
 export interface AppState {
   currentView: ViewType;
@@ -67,6 +66,8 @@ export type AppAction =
   | { type: "SET_LOADING"; isLoading: boolean }
   | { type: "REFRESH_VIEW" }
   | { type: "TOGGLE_COMPLETE" }
+  | { type: "MOVE_TASK_DOWN" }
+  | { type: "MOVE_TASK_UP" }
   | { type: "DELETE_TASK" }
   | { type: "OPEN_ITEM" }
   | { type: "TOGGLE_COLLAPSE"; id: string }

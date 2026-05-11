@@ -43,6 +43,66 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, selectedIndex: next };
     }
 
+    case "MOVE_TASK_DOWN": {
+      if (state.currentView === "anytime" && state.anytimeData) {
+        const plan = buildAnytimeRenderPlan(state.anytimeData, state.anytimeExpanded);
+        const currentItem = plan[state.selectedIndex];
+        if (!currentItem || currentItem.type !== "task") return state;
+        let nextIdx = state.selectedIndex + 1;
+        while (nextIdx < plan.length && plan[nextIdx]?.type !== "task") nextIdx++;
+        if (nextIdx >= plan.length) return state;
+        const nextItem = plan[nextIdx];
+        if (!nextItem || nextItem.type !== "task") return state;
+        const task = findTaskInData(state.anytimeData, currentItem.id);
+        const adjacentTask = findTaskInData(state.anytimeData, nextItem.id);
+        if (!task || !adjacentTask) return state;
+        return {
+          ...state,
+          selectedIndex: nextIdx,
+          pendingAction: { type: "reorder", taskId: task.id, adjacentTaskId: adjacentTask.id, direction: "down" },
+        };
+      }
+      if (state.currentView !== "someday") return state;
+      const downCurrent = state.items[state.selectedIndex];
+      const downNext = state.items[state.selectedIndex + 1];
+      if (!downCurrent || !downNext) return state;
+      return {
+        ...state,
+        selectedIndex: state.selectedIndex + 1,
+        pendingAction: { type: "reorder", taskId: downCurrent.id, adjacentTaskId: downNext.id, direction: "down" },
+      };
+    }
+
+    case "MOVE_TASK_UP": {
+      if (state.currentView === "anytime" && state.anytimeData) {
+        const plan = buildAnytimeRenderPlan(state.anytimeData, state.anytimeExpanded);
+        const currentItem = plan[state.selectedIndex];
+        if (!currentItem || currentItem.type !== "task") return state;
+        let prevIdx = state.selectedIndex - 1;
+        while (prevIdx >= 0 && plan[prevIdx]?.type !== "task") prevIdx--;
+        if (prevIdx < 0) return state;
+        const prevItem = plan[prevIdx];
+        if (!prevItem || prevItem.type !== "task") return state;
+        const task = findTaskInData(state.anytimeData, currentItem.id);
+        const adjacentTask = findTaskInData(state.anytimeData, prevItem.id);
+        if (!task || !adjacentTask) return state;
+        return {
+          ...state,
+          selectedIndex: prevIdx,
+          pendingAction: { type: "reorder", taskId: task.id, adjacentTaskId: adjacentTask.id, direction: "up" },
+        };
+      }
+      if (state.currentView !== "someday") return state;
+      const upCurrent = state.items[state.selectedIndex];
+      const upPrev = state.items[state.selectedIndex - 1];
+      if (!upCurrent || !upPrev) return state;
+      return {
+        ...state,
+        selectedIndex: state.selectedIndex - 1,
+        pendingAction: { type: "reorder", taskId: upCurrent.id, adjacentTaskId: upPrev.id, direction: "up" },
+      };
+    }
+
     case "GO_TO_TOP": {
       if (state.currentView === "anytime" && state.anytimeData) {
         const plan = buildAnytimeRenderPlan(state.anytimeData, state.anytimeExpanded);

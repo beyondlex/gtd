@@ -109,6 +109,17 @@ export class TaskService {
     });
   }
 
+  reorder(taskId1: string, taskId2: string): void {
+    const task1 = this.taskRepo.findById(taskId1);
+    const task2 = this.taskRepo.findById(taskId2);
+    if (!task1 || !task2) throw new Error(`Task not found`);
+    const temp = task1.sortOrder;
+    const updated1 = this.taskRepo.update(taskId1, { sortOrder: task2.sortOrder });
+    const updated2 = this.taskRepo.update(taskId2, { sortOrder: temp });
+    this.eventBus.emit("task:updated", { task: updated1 });
+    this.eventBus.emit("task:updated", { task: updated2 });
+  }
+
   moveToSomeday(id: string): Task {
     return this.taskRepo.update(id, {
       isSomeday: true,

@@ -210,6 +210,18 @@ description = "Refresh current view"
 context = "global"
 
 [[binding]]
+keys = "ctrl+j"
+action = "moveTaskDown"
+description = "Move task down"
+context = "global"
+
+[[binding]]
+keys = "ctrl+k"
+action = "moveTaskUp"
+description = "Move task up"
+context = "global"
+
+[[binding]]
 keys = "h"
 action = "toggleCollapse"
 description = "Toggle section/project collapse"

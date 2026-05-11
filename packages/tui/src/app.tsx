@@ -85,14 +85,18 @@ function AppInner() {
   useEffect(() => {
     if (!state.pendingAction) return;
 
-    const { type, taskId } = state.pendingAction;
-
     try {
-      if (type === "toggleComplete") {
-        const updated = services.taskService.toggleComplete(taskId);
+      if (state.pendingAction.type === "toggleComplete") {
+        const updated = services.taskService.toggleComplete(state.pendingAction.taskId);
         dispatch({
           type: "SET_STATUS",
           message: updated.isCompleted ? "Task completed" : "Task uncompleted",
+        });
+      } else if (state.pendingAction.type === "reorder") {
+        services.taskService.reorder(state.pendingAction.taskId, state.pendingAction.adjacentTaskId);
+        dispatch({
+          type: "SET_STATUS",
+          message: state.pendingAction.direction === "down" ? "Task moved down" : "Task moved up",
         });
       }
     } catch (error) {

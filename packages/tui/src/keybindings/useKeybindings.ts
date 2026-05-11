@@ -47,6 +47,10 @@ function actionFromString(
       return { type: "GO_TO_TOP" };
     case "goToBottom":
       return { type: "GO_TO_BOTTOM" };
+    case "moveTaskDown":
+      return { type: "MOVE_TASK_DOWN" };
+    case "moveTaskUp":
+      return { type: "MOVE_TASK_UP" };
     case "newTask":
       return { type: "OPEN_MODAL", modal: { type: "newTask" } };
     case "editTask":
