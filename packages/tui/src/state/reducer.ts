@@ -1,4 +1,6 @@
 import type { AppState, AppAction } from "./types.js";
+import { buildAnytimeRenderPlan, findTaskInData } from "../components/views/anytime-utils.js";
+import type { AnytimeRenderItem } from "../components/views/anytime-utils.js";
 
 export function appReducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
@@ -22,30 +24,41 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     case "MOVE_SELECTION_DOWN": {
       const maxLen = state.renderPlanLength ?? state.items.length;
       if (maxLen <= 0) return state;
-      return {
-        ...state,
-        selectedIndex: state.selectedIndex >= maxLen - 1 ? 0 : state.selectedIndex + 1,
-      };
+      let next = state.selectedIndex >= maxLen - 1 ? 0 : state.selectedIndex + 1;
+      if (state.currentView === "anytime" && state.anytimeData) {
+        const plan = buildAnytimeRenderPlan(state.anytimeData, state.anytimeExpanded);
+        next = findNextTaskIndex(plan, next, 1);
+      }
+      return { ...state, selectedIndex: next };
     }
 
     case "MOVE_SELECTION_UP": {
       const maxLen = state.renderPlanLength ?? state.items.length;
       if (maxLen <= 0) return state;
-      return {
-        ...state,
-        selectedIndex: state.selectedIndex <= 0 ? maxLen - 1 : state.selectedIndex - 1,
-      };
+      let next = state.selectedIndex <= 0 ? maxLen - 1 : state.selectedIndex - 1;
+      if (state.currentView === "anytime" && state.anytimeData) {
+        const plan = buildAnytimeRenderPlan(state.anytimeData, state.anytimeExpanded);
+        next = findNextTaskIndex(plan, next, -1);
+      }
+      return { ...state, selectedIndex: next };
     }
 
-    case "GO_TO_TOP":
+    case "GO_TO_TOP": {
+      if (state.currentView === "anytime" && state.anytimeData) {
+        const plan = buildAnytimeRenderPlan(state.anytimeData, state.anytimeExpanded);
+        return { ...state, selectedIndex: findNextTaskIndex(plan, 0, 1) };
+      }
       return { ...state, selectedIndex: 0 };
+    }
 
     case "GO_TO_BOTTOM": {
       const maxLen = state.renderPlanLength ?? state.items.length;
-      return {
-        ...state,
-        selectedIndex: Math.max(0, maxLen - 1),
-      };
+      let next = Math.max(0, maxLen - 1);
+      if (state.currentView === "anytime" && state.anytimeData) {
+        const plan = buildAnytimeRenderPlan(state.anytimeData, state.anytimeExpanded);
+        next = findNextTaskIndex(plan, next, -1);
+      }
+      return { ...state, selectedIndex: next };
     }
 
     case "NEXT_SECTION": {
@@ -65,18 +78,25 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       };
     }
 
-    case "SET_ITEMS":
+    case "SET_ITEMS": {
+      const newAnytimeData = action.anytimeData !== undefined ? action.anytimeData : state.anytimeData;
+      let newIndex = Math.min(state.selectedIndex, Math.max(0, (action.renderPlanLength ?? action.items.length) - 1));
+      if (newAnytimeData && state.currentView === "anytime") {
+        const plan = buildAnytimeRenderPlan(newAnytimeData, state.anytimeExpanded);
+        newIndex = findNextTaskIndex(plan, newIndex, 1);
+      }
       return {
         ...state,
         items: action.items,
         sectionBoundaries: action.sectionBoundaries,
         groupLabels: action.groupLabels ?? [],
         renderPlanLength: action.renderPlanLength ?? null,
-        anytimeData: action.anytimeData !== undefined ? action.anytimeData : state.anytimeData,
-        selectedIndex: Math.min(state.selectedIndex, Math.max(0, (action.renderPlanLength ?? action.items.length) - 1)),
+        anytimeData: newAnytimeData,
+        selectedIndex: newIndex,
         isLoading: false,
         pendingAction: null,
       };
+    }
 
     case "SET_COUNTS":
       return { ...state, counts: action.counts };
@@ -109,7 +129,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       };
 
     case "TOGGLE_COMPLETE": {
-      const task = state.items[state.selectedIndex];
+      const task = resolveSelectedTask(state);
       if (!task) return state;
       return {
         ...state,
@@ -118,7 +138,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     }
 
     case "DELETE_TASK": {
-      const task = state.items[state.selectedIndex];
+      const task = resolveSelectedTask(state);
       if (!task) return state;
       return {
         ...state,
@@ -127,7 +147,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     }
 
     case "OPEN_ITEM": {
-      const task = state.items[state.selectedIndex];
+      const task = resolveSelectedTask(state);
       if (!task) return state;
       return {
         ...state,
@@ -145,4 +165,31 @@ export function appReducer(state: AppState, action: AppAction): AppState {
     default:
       return state;
   }
+}
+
+function findNextTaskIndex(
+  plan: AnytimeRenderItem[],
+  startIndex: number,
+  direction: 1 | -1,
+): number {
+  const len = plan.length;
+  if (len === 0) return startIndex;
+  let idx = startIndex;
+  for (let i = 0; i < len; i++) {
+    if (plan[idx]?.type === "task") return idx;
+    idx = (idx + direction + len) % len;
+  }
+  return startIndex;
+}
+
+function resolveSelectedTask(state: AppState): import("@gtd/core").Task | undefined {
+  if (state.currentView === "anytime" && state.anytimeData) {
+    const plan = buildAnytimeRenderPlan(state.anytimeData, state.anytimeExpanded);
+    const item = plan[state.selectedIndex];
+    if (item && item.type === "task") {
+      return findTaskInData(state.anytimeData, item.id);
+    }
+    return undefined;
+  }
+  return state.items[state.selectedIndex];
 }

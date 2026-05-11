@@ -8,6 +8,6 @@ function endOfToday(now = new Date()): Date {
 
 export function resolveQuickCaptureDeadline(currentView: QuickCaptureDefaultView, parsedDeadline: Date | null): Date | undefined {
   if (parsedDeadline) return parsedDeadline;
-  if (currentView === "inbox" || currentView === "today") return endOfToday();
+  if (currentView === "inbox" || currentView === "today" || currentView === "upcoming") return endOfToday();
   return undefined;
 }

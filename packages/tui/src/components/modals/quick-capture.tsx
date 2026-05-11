@@ -32,6 +32,7 @@ export function QuickCapture() {
             title: trimmed,
             deadline: resolveQuickCaptureDeadline(state.currentView, parsedDeadline),
             isInInbox: state.currentView === "inbox",
+            isSomeday: state.currentView === "someday",
           });
 
           dispatch({ type: "CLOSE_MODAL" });

@@ -210,10 +210,10 @@ function fetchAllCounts(
   return {
     inbox: svc.inboxService.getInboxCount(),
     today: svc.todayView.getTodayCount(),
-    upcoming: 0,
-    anytime: 0,
+    upcoming: svc.upcomingView.getUpcomingCount(),
+    anytime: svc.anytimeView.getCount(),
     someday: svc.somedayView.getData().tasks.length,
-    logbook: 0,
+    logbook: svc.logbookView.getCount(),
     trash: svc.trashView.getTrashCount(),
   };
 }

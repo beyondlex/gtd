@@ -88,4 +88,8 @@ export class AnytimeViewService {
       },
     };
   }
+
+  getCount(): number {
+    return this.taskRepo.findAnytime().length;
+  }
 }

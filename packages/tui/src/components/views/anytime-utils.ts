@@ -1,4 +1,4 @@
-import type { AnytimeData } from "@gtd/core";
+import type { AnytimeData, Task } from "@gtd/core";
 
 export interface AnytimeRenderItem {
   type: "areaHeader" | "projectHeader" | "task" | "ungroupedHeader";
@@ -83,4 +83,19 @@ export function getSectionBoundaries(plan: AnytimeRenderItem[]): {
   }
 
   return { boundaries, labels };
+}
+
+export function findTaskInData(
+  data: AnytimeData,
+  taskId: string,
+): Task | undefined {
+  for (const ag of data.areaGroups) {
+    const found = ag.tasks.find((t) => t.id === taskId);
+    if (found) return found;
+    for (const pg of ag.projects) {
+      const found2 = pg.tasks.find((t) => t.id === taskId);
+      if (found2) return found2;
+    }
+  }
+  return data.ungrouped.tasks.find((t) => t.id === taskId);
 }

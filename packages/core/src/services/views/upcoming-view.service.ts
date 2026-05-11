@@ -38,4 +38,8 @@ export class UpcomingViewService {
         tasks: group.tasks,
       }));
   }
+
+  getUpcomingCount(days = 30): number {
+    return this.taskRepo.findUpcoming(days).length;
+  }
 }

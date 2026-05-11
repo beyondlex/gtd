@@ -37,4 +37,8 @@ export class LogbookViewService {
         return { label, tasks };
       });
   }
+
+  getCount(): number {
+    return this.taskRepo.findCompleted().length;
+  }
 }

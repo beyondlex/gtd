@@ -1,7 +1,6 @@
 import { Box, Text } from "ink";
 import { useAppState } from "../../state/context.js";
 import { useTheme } from "../../theme/context.js";
-import { EmptyState } from "../common/empty-state.js";
 import { SearchView } from "../views/search-view.js";
 import { InboxView } from "../views/inbox-view.js";
 import { TodayView } from "../views/today-view.js";
@@ -35,18 +34,7 @@ export function MainContent() {
     }
   }
 
-  // Priority: empty -> normal view
-  const shouldShowEmptyState = state.items.length === 0 && state.currentView !== "anytime" && !state.isLoading;
-
-  if (shouldShowEmptyState) {
-    return (
-      <EmptyState
-        message="No items"
-        hint='Press "n" to create a new task'
-      />
-    );
-  }
-
+  // Render the current view directly (each view handles its own empty state)
   switch (state.currentView) {
     case "inbox":
       return <InboxView />;

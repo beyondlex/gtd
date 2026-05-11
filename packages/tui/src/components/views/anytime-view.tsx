@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { useInput, Box, Text } from "ink";
 import { useAppState } from "../../state/context.js";
 import { useTheme } from "../../theme/context.js";
-import { buildAnytimeRenderPlan } from "./anytime-utils.js";
+import { buildAnytimeRenderPlan, findTaskInData } from "./anytime-utils.js";
 
 export function AnytimeView() {
   const { state, dispatch } = useAppState();
@@ -17,13 +17,31 @@ export function AnytimeView() {
             state.anytimeExpanded,
           );
           const item = currentPlan[state.selectedIndex];
-          if (
-            item &&
-            (item.type === "areaHeader" ||
+          if (item) {
+            // If on a header, toggle directly; if on a task, find the nearest parent header
+            let targetId: string | null = null;
+            if (
+              item.type === "areaHeader" ||
               item.type === "projectHeader" ||
-              item.type === "ungroupedHeader")
-          ) {
-            dispatch({ type: "TOGGLE_COLLAPSE", id: item.id });
+              item.type === "ungroupedHeader"
+            ) {
+              targetId = item.id;
+            } else if (item.type === "task") {
+              for (let i = state.selectedIndex - 1; i >= 0; i--) {
+                const prev = currentPlan[i];
+                if (
+                  prev.type === "areaHeader" ||
+                  prev.type === "projectHeader" ||
+                  prev.type === "ungroupedHeader"
+                ) {
+                  targetId = prev.id;
+                  break;
+                }
+              }
+            }
+            if (targetId) {
+              dispatch({ type: "TOGGLE_COLLAPSE", id: targetId });
+            }
           }
         }
       },
@@ -121,19 +139,4 @@ export function AnytimeView() {
   });
 
   return <Box flexDirection="column" flexGrow={1}>{rows}</Box>;
-}
-
-function findTaskInData(
-  data: import("@gtd/core").AnytimeData,
-  taskId: string,
-): import("@gtd/core").Task | undefined {
-  for (const ag of data.areaGroups) {
-    const found = ag.tasks.find((t) => t.id === taskId);
-    if (found) return found;
-    for (const pg of ag.projects) {
-      const found2 = pg.tasks.find((t) => t.id === taskId);
-      if (found2) return found2;
-    }
-  }
-  return data.ungrouped.tasks.find((t) => t.id === taskId);
 }

@@ -13,7 +13,6 @@ export class TodayViewService {
   getGroups(): TodayGroup[] {
     const overdue = this.taskRepo.findOverdue();
     const today = this.taskRepo.findToday();
-    const anytime = this.taskRepo.findAnytime();
 
     const groups: TodayGroup[] = [];
 
@@ -23,10 +22,6 @@ export class TodayViewService {
 
     if (today.length > 0) {
       groups.push({ label: "Today", tasks: today });
-    }
-
-    if (anytime.length > 0) {
-      groups.push({ label: "No Date", tasks: anytime });
     }
 
     return groups;
