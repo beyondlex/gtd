@@ -8,13 +8,6 @@ export function AnytimeView() {
   const { state, dispatch } = useAppState();
   const theme = useTheme();
 
-  const data = state.anytimeData;
-  if (!data) {
-    return null;
-  }
-
-  const plan = buildAnytimeRenderPlan(data, state.anytimeExpanded);
-
   useInput(
     useCallback(
       (input) => {
@@ -37,6 +30,13 @@ export function AnytimeView() {
       [state.anytimeData, state.anytimeExpanded, state.selectedIndex, dispatch],
     ),
   );
+
+  const data = state.anytimeData;
+  if (!data) {
+    return null;
+  }
+
+  const plan = buildAnytimeRenderPlan(data, state.anytimeExpanded);
 
   if (plan.length === 0) {
     return (

@@ -57,9 +57,10 @@ function AppInner() {
       dispatch({ type: "SET_COUNTS", counts });
     } catch (error) {
       dispatch({
-        type: "SET_STATUS",
-        message: `Error loading ${state.currentView}: ${(error as Error).message}`,
+        type: "SET_ERROR",
+        error: `Error loading ${state.currentView}: ${(error as Error).message}`,
       });
+      dispatch({ type: "SET_LOADING", isLoading: false });
     }
   }, [state.currentView, state.isLoading, services, dispatch]);
 

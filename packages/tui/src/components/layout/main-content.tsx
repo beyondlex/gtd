@@ -35,16 +35,8 @@ export function MainContent() {
     }
   }
 
-  // Priority: loading -> empty -> normal view
-  if (state.isLoading) {
-    return (
-      <Box flexGrow={1} justifyContent="center" alignItems="center">
-        <Text color={theme.colors.textMuted}>Loading…</Text>
-      </Box>
-    );
-  }
-
-  const shouldShowEmptyState = state.items.length === 0 && state.currentView !== "anytime";
+  // Priority: empty -> normal view
+  const shouldShowEmptyState = state.items.length === 0 && state.currentView !== "anytime" && !state.isLoading;
 
   if (shouldShowEmptyState) {
     return (

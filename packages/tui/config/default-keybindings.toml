@@ -72,6 +72,12 @@ context = "global"
 
 [[binding]]
 keys = "escape"
+action = "dismissError"
+description = "Dismiss error message"
+context = "global"
+
+[[binding]]
+keys = "escape"
 action = "closeModal"
 description = "Close modal / cancel"
 context = "modal"

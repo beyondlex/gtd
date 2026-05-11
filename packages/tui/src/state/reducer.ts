@@ -7,13 +7,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         ...state,
         currentView: action.view,
         selectedIndex: 0,
-        items: [],
-        sectionBoundaries: [],
-        groupLabels: [],
-        renderPlanLength: null,
-        anytimeData: null,
-        anytimeExpanded: {},
-        statusMessage: null,
+        error: null,
         isLoading: true,
       };
 
@@ -91,16 +85,19 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, modal: action.modal };
 
     case "CLOSE_MODAL":
-      return { ...state, modal: null };
+      return { ...state, modal: null, error: null };
 
     case "SET_STATUS":
       return { ...state, statusMessage: action.message };
+
+    case "SET_ERROR":
+      return { ...state, error: action.error };
 
     case "SET_LOADING":
       return { ...state, isLoading: action.isLoading };
 
     case "REFRESH_VIEW":
-      return { ...state, isLoading: true };
+      return { ...state, isLoading: true, error: null };
 
     case "TOGGLE_COLLAPSE":
       return {

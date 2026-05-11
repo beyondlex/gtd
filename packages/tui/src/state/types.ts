@@ -41,6 +41,7 @@ export interface AppState {
   counts: Record<ViewType, number>;
   modal: ModalState | SearchModalState | null;
   statusMessage: string | null;
+  error: string | null;
   isLoading: boolean;
   shouldQuit: boolean;
   anytimeData: AnytimeData | null;
@@ -62,6 +63,7 @@ export type AppAction =
   | { type: "OPEN_MODAL"; modal: ModalState | SearchModalState }
   | { type: "CLOSE_MODAL" }
   | { type: "SET_STATUS"; message: string | null }
+  | { type: "SET_ERROR"; error: string | null }
   | { type: "SET_LOADING"; isLoading: boolean }
   | { type: "REFRESH_VIEW" }
   | { type: "TOGGLE_COMPLETE" }
@@ -90,6 +92,7 @@ export const INITIAL_STATE: AppState = {
   },
   modal: null,
   statusMessage: null,
+  error: null,
   isLoading: true,
   shouldQuit: false,
   anytimeData: null,

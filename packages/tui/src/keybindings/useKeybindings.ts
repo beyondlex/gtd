@@ -65,6 +65,8 @@ function actionFromString(
       return { type: "OPEN_MODAL", modal: { type: "search" } };
     case "closeModal":
       return { type: "CLOSE_MODAL" };
+    case "dismissError":
+      return { type: "SET_ERROR", error: null };
     case "refreshView":
       return { type: "REFRESH_VIEW" };
     case "nextSection":

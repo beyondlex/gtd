@@ -8,6 +8,7 @@ const defaultBindings: KeybindingDef[] = [
   { keys: "g g", action: "goToTop", description: "Go to top", context: "global" },
   { keys: "G", action: "goToBottom", description: "Go to bottom", context: "global" },
   { keys: "space", action: "toggleComplete", description: "Toggle complete", context: "global" },
+  { keys: "escape", action: "dismissError", description: "Dismiss error", context: "global" },
   { keys: "escape", action: "closeModal", description: "Close modal", context: "modal" },
   { keys: "q", action: "quit", description: "Quit", context: "global" },
   { keys: "1", action: "navigateTo", description: "Go to inbox", context: "global" },
@@ -51,10 +52,10 @@ describe("KeybindingRegistry", () => {
     expect(result).toBeNull();
   });
 
-  test("context scoping: escape only matches in modal context", () => {
+  test("context scoping: escape matches dismissError in global, closeModal in modal", () => {
     const reg = new KeybindingRegistry(defaultBindings);
     const globalResult = reg.match("", { ctrl: false, shift: false, meta: false, escape: true }, "global");
-    expect(globalResult).toBeNull();
+    expect(globalResult).toEqual({ action: "dismissError", consumed: true });
 
     const modalResult = reg.match("", { ctrl: false, shift: false, meta: false, escape: true }, "modal");
     expect(modalResult).toEqual({ action: "closeModal", consumed: true });

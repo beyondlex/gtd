@@ -13,7 +13,7 @@ describe("appReducer", () => {
     const next = appReducer(state, { type: "NAVIGATE_TO_VIEW", view: "today" });
     expect(next.currentView).toBe("today");
     expect(next.selectedIndex).toBe(0);
-    expect(next.items).toEqual([]);
+    expect(next.items).toEqual(state.items); // keeps old items to avoid flicker
     expect(next.isLoading).toBe(true);
   });
 
@@ -216,7 +216,7 @@ describe("appReducer", () => {
     expect(next.pendingAction).toEqual({ type: "toggleComplete", taskId: "abc" });
   });
 
-  test("NAVIGATE_TO_VIEW resets groupLabels, anytimeData, and renderPlanLength", () => {
+  test("NAVIGATE_TO_VIEW keeps groupLabels, anytimeData, and renderPlanLength", () => {
     const state = createState({
       groupLabels: ["Inbox"],
       anytimeData: {} as any,
@@ -224,9 +224,9 @@ describe("appReducer", () => {
       selectedIndex: 5,
     });
     const next = appReducer(state, { type: "NAVIGATE_TO_VIEW", view: "today" });
-    expect(next.groupLabels).toEqual([]);
-    expect(next.anytimeData).toBeNull();
-    expect(next.renderPlanLength).toBeNull();
+    expect(next.groupLabels).toEqual(["Inbox"]); // kept to avoid flicker
+    expect(next.anytimeData).toBe(state.anytimeData);
+    expect(next.renderPlanLength).toBe(10);
   });
 
   test("SET_ITEMS stores groupLabels and renderPlanLength", () => {

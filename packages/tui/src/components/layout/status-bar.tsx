@@ -15,9 +15,15 @@ export function StatusBar() {
       paddingX={1}
     >
       <Box flexGrow={1}>
-        <Text color={theme.statusBar.text}>
-          {state.statusMessage ?? hints}
-        </Text>
+        {state.error ? (
+          <Text color={theme.colors.error} bold>
+            {"⚠ "}{state.error}{" | Esc: dismiss"}
+          </Text>
+        ) : (
+          <Text color={theme.statusBar.text}>
+            {state.statusMessage ?? hints}
+          </Text>
+        )}
       </Box>
       <Text color={theme.statusBar.modeText}>
         {state.currentView}
