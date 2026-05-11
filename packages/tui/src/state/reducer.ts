@@ -27,17 +27,21 @@ export function appReducer(state: AppState, action: AppAction): AppState {
 
     case "MOVE_SELECTION_DOWN": {
       const maxLen = state.renderPlanLength ?? state.items.length;
+      if (maxLen <= 0) return state;
       return {
         ...state,
-        selectedIndex: Math.min(state.selectedIndex + 1, Math.max(0, maxLen - 1)),
+        selectedIndex: state.selectedIndex >= maxLen - 1 ? 0 : state.selectedIndex + 1,
       };
     }
 
-    case "MOVE_SELECTION_UP":
+    case "MOVE_SELECTION_UP": {
+      const maxLen = state.renderPlanLength ?? state.items.length;
+      if (maxLen <= 0) return state;
       return {
         ...state,
-        selectedIndex: Math.max(state.selectedIndex - 1, 0),
+        selectedIndex: state.selectedIndex <= 0 ? maxLen - 1 : state.selectedIndex - 1,
       };
+    }
 
     case "GO_TO_TOP":
       return { ...state, selectedIndex: 0 };

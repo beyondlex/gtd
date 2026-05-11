@@ -23,8 +23,14 @@ describe("appReducer", () => {
     expect(next.selectedIndex).toBe(1);
   });
 
-  test("MOVE_SELECTION_DOWN clamps at max", () => {
+  test("MOVE_SELECTION_DOWN wraps to top at max", () => {
     const state = createState({ items: [{ id: "1" } as any], selectedIndex: 0 });
+    const next = appReducer(state, { type: "MOVE_SELECTION_DOWN" });
+    expect(next.selectedIndex).toBe(0);
+  });
+
+  test("MOVE_SELECTION_DOWN wraps to top from bottom", () => {
+    const state = createState({ items: [{ id: "1" } as any, { id: "2" } as any], selectedIndex: 1 });
     const next = appReducer(state, { type: "MOVE_SELECTION_DOWN" });
     expect(next.selectedIndex).toBe(0);
   });
@@ -35,10 +41,10 @@ describe("appReducer", () => {
     expect(next.selectedIndex).toBe(0);
   });
 
-  test("MOVE_SELECTION_UP clamps at 0", () => {
-    const state = createState({ selectedIndex: 0 });
+  test("MOVE_SELECTION_UP wraps to bottom at 0", () => {
+    const state = createState({ items: [{ id: "1" } as any, { id: "2" } as any], selectedIndex: 0 });
     const next = appReducer(state, { type: "MOVE_SELECTION_UP" });
-    expect(next.selectedIndex).toBe(0);
+    expect(next.selectedIndex).toBe(1);
   });
 
   test("GO_TO_TOP sets selection to 0", () => {
